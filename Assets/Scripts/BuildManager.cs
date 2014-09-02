@@ -50,11 +50,11 @@ public class BuildManager : MonoBehaviour {
 				if(!item.CanPLace)
 					return;
 
-				Vector2 leftTop = new Vector3 (calcPoint.x - 1, calcPoint.z + 1);
+				Vector2 leftTop = new Vector2 (calcPoint.x + 1, calcPoint.y+1);
 
 				item.IsPlaced = true;
 
-				UpdateDatabase(leftTop);
+                StartCoroutine("UpdateDatabase", leftTop);
 
 				ModeType = Mode.Move;
 				_currentItem = null;
@@ -87,9 +87,27 @@ public class BuildManager : MonoBehaviour {
 	}
 	
 
-	public void UpdateDatabase(Vector2 topLeft)
+	IEnumerator UpdateDatabase(Vector2 topLeft)
 	{
-
+		//Add a new building to the database as soon as its placed
+        string name = "Kuhmaus";
+        int xPos = (int)topLeft.x;
+        int yPos = (int)topLeft.y;
+        int buildingID = 2;
+        int level =3;
+        WWWForm form = new WWWForm();
+        form.AddField("addbuilding_name",name);
+        form.AddField("addbuilding_xPos",xPos);
+        form.AddField("addbuilding_yPos", yPos);
+        form.AddField("addbuilding_buildingID",buildingID);
+        form.AddField("addbuilding_level", level);
+        WWW www = new WWW("http://kuhmaus.bplaced.net/db_storebuilding.php",form);
+        while (!www.isDone && string.IsNullOrEmpty(www.error))
+        {
+            Debug.Log("Storing building: " + name + ", " + xPos + ", " + yPos + ", " + buildingID + ", " + level);
+            yield return null;
+        }
+        www.Dispose();
 	}
 
 
