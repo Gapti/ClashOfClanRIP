@@ -10,8 +10,7 @@ public enum Mode
 public class BuildManager : MonoBehaviour {
 	
 	public GameObject Obj;
-
-	private TileMaps _tileMaps;
+	
 	private GameObject _hover;
 
 	private GameObject _currentItem;
@@ -23,13 +22,7 @@ public class BuildManager : MonoBehaviour {
 	public Mode ModeType = Mode.Move;
 
 	//Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y)
-
-
-	void Awake()
-	{
-		_tileMaps = GetComponent<TileMaps> ();
-		_hover = GameObject.FindGameObjectWithTag ("Hover");
-	}
+	
 
 	// Update is called once per frame
 	void Update () {
@@ -42,7 +35,11 @@ public class BuildManager : MonoBehaviour {
 			Vector3 calcPoint = getTilePoints(hit.point);
 
 			if(ModeType == Mode.Build || ModeType == Mode.Move && _currentItem != null)
-			_currentItem.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
+			{
+				_currentItem.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
+			}
+
+			CheckInBounds(calcPoint);
 
 			///place the item
 			if(Input.GetMouseButtonDown(0) && ModeType == Mode.Build)
@@ -110,6 +107,17 @@ public class BuildManager : MonoBehaviour {
         www.Dispose();
 	}
 
+	bool CheckInBounds(Vector2 pos)
+	{
+		Vector2 top = new Vector2 (pos.x, pos.y + 1);
+		Vector2 bottom = new Vector2 (pos.x, pos.y - 1);
+		Vector2 left = new Vector2 (pos.x - 1, pos.y);
+		Vector2 right = new Vector2 (pos.x + 1, pos.y);
+
+		print (top + " top " + bottom + "bottom " + left + " left " + right + " right ");
+
+		return true;
+	}
 
 	// Convert world space floor points to tile points
 	Vector2 getTilePoints(Vector3 floorPoints)
@@ -119,7 +127,7 @@ public class BuildManager : MonoBehaviour {
 		tilePoints.x = (int)(floorPoints.x);
 		tilePoints.y = (int)(floorPoints.z);
 
-		//print ("y " + tilePoints.y + " x " + tilePoints.x); 
+		print ("y " + tilePoints.y + " x " + tilePoints.x); 
 
 		// Return the tile points
 		return tilePoints;

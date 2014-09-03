@@ -23,8 +23,21 @@ public class Item : MonoBehaviour  {
 	public int Level = 1;
 
 	private bool _canPlace = true;
+	private bool _outSideMap = false;
 
 	private bool _isPlaced;
+
+	public bool OutSideMap
+	{
+		get
+		{
+			return _outSideMap;
+		}
+		set
+		{
+			_outSideMap = value;
+		}
+	}
 
 	public bool IsPlaced
 	{
@@ -54,6 +67,11 @@ public class Item : MonoBehaviour  {
 		{
 			return _canPlace;
 		}
+
+		set
+		{
+			_canPlace = value;
+		}
 	}
 
 	void OnTriggerStay(Collider collider)
@@ -61,8 +79,6 @@ public class Item : MonoBehaviour  {
 		if (!_isPlaced) 
 		{
 			_canPlace = false;
-		
-			this.HightLight.renderer.material.SetColor ("_Color", Color.red);
 		}
 		
 	}
@@ -72,8 +88,18 @@ public class Item : MonoBehaviour  {
 		if (!_isPlaced) 
 		{
 			_canPlace = true;
-		
+		}
+	}
+
+	void Update()
+	{
+		if (_canPlace || !_outSideMap)
+		{
 			this.HightLight.renderer.material.SetColor ("_Color", Color.green);
+		} 
+		else 
+		{
+			this.HightLight.renderer.material.SetColor ("_Color", Color.red);
 		}
 	}
 
