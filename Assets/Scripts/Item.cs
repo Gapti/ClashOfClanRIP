@@ -19,6 +19,7 @@ public class Item : MonoBehaviour  {
 	public string ItemDesc;
 	public Direction direction = Direction.None;
 	public GameObject HightLight;
+    public Vector2 topLeftPosition;
 
 	public int Level = 1;
 

@@ -49,12 +49,11 @@ public class BuildManager : MonoBehaviour {
 			{
 				if(!item.CanPLace)
 					return;
-
-				Vector2 leftTop = new Vector2 (calcPoint.x + 1, calcPoint.y+1);
+                item.topLeftPosition = new Vector2(calcPoint.x + 1, calcPoint.y + 1);
 
 				item.IsPlaced = true;
 
-                StartCoroutine("UpdateDatabase", leftTop);
+                StartCoroutine("DB_InsertBuilding", item.topLeftPosition);
 
 				ModeType = Mode.Move;
 				_currentItem = null;
@@ -65,6 +64,7 @@ public class BuildManager : MonoBehaviour {
 
 				if(ItemHit != null)
 				{
+                    StartCoroutine("DB_RemoveBuilding", ItemHit.topLeftPosition);
 					_currentItem = hit.transform.gameObject;
 					item = (Item)_currentItem.GetComponent<Item> ();
 					item.IsPlaced = false;
@@ -85,9 +85,9 @@ public class BuildManager : MonoBehaviour {
 		_currentItem = (GameObject)Instantiate (Obj, Input.mousePosition, Quaternion.identity);
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
-	
 
-	IEnumerator UpdateDatabase(Vector2 topLeft)
+
+    IEnumerator DB_InsertBuilding(Vector2 topLeft)
 	{
 		//Add a new building to the database as soon as its placed
         string name = "Kuhmaus";
@@ -109,6 +109,25 @@ public class BuildManager : MonoBehaviour {
         }
         www.Dispose();
 	}
+
+    IEnumerator DB_RemoveBuilding(Vector2 topLeft)
+    {
+        string name = "Kuhmaus";
+        int xPos = (int)topLeft.x;
+        int yPos = (int)topLeft.y;
+        WWWForm form = new WWWForm();
+        
+        form.AddField("removebuilding_name", name);
+        form.AddField("removebuilding_xPos", xPos);
+        form.AddField("removebuilding_yPos", yPos);
+        WWW www = new WWW("http://kuhmaus.bplaced.net/db_removebuilding.php", form);
+        while (!www.isDone && string.IsNullOrEmpty(www.error))
+        {
+            Debug.Log("Removing building: " + name + ", " + xPos + ", " + yPos);
+            yield return null;
+        }
+        www.Dispose();
+    }
 
 
 	// Convert world space floor points to tile points
