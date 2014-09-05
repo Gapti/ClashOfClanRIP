@@ -9,10 +9,11 @@ public enum Mode
 
 public class BuildManager : MonoBehaviour {
 	
-	public GameObject Obj;
+	public GFGrid grid;
+	public Collider gridCollider;
 
-	private TileMaps _tileMaps;
-	private GameObject _hover;
+	public GameObject CampFire;
+	public GameObject Rock;
 
 	private GameObject _currentItem;
 	private Item item;
@@ -22,13 +23,13 @@ public class BuildManager : MonoBehaviour {
 
 	public Mode ModeType = Mode.Move;
 
-	//Mathf.RoundToInt( (calcPoint.y / 10 ) * 10 + (calcPoint.x * 10)), new Vector3(calcPoint.x, 0f, calcPoint.y)
+	public Vector3 OldPosition;
 
 
 	void Awake()
 	{
-		_tileMaps = GetComponent<TileMaps> ();
-		_hover = GameObject.FindGameObjectWithTag ("Hover");
+		grid = GameObject.FindGameObjectWithTag ("Grid").GetComponent<GFGrid> ();
+		gridCollider = grid.GetComponent<Collider> ();
 	}
 
 	// Update is called once per frame
@@ -39,19 +40,26 @@ public class BuildManager : MonoBehaviour {
 
 		if (Physics.Raycast (ray, out hit, 1000)) 
 		{
-			Vector3 calcPoint = getTilePoints(hit.point);
 
 			if(ModeType == Mode.Build || ModeType == Mode.Move && _currentItem != null)
-			_currentItem.transform.localPosition = new Vector3(calcPoint.x, 0f, calcPoint.y);
+			{
+				_currentItem.transform.position = hit.point;
+				grid.AlignTransform(_currentItem.transform);
+				_currentItem.transform.position = CalculateOffsetY(); 
+			}
+
 
 			///place the item
 			if(Input.GetMouseButtonDown(0) && ModeType == Mode.Build)
 			{
 				if(!item.CanPLace)
 					return;
-                item.topLeftPosition = new Vector2(calcPoint.x + 1, calcPoint.y + 1);
+				item.topLeftPosition = _currentItem.transform.localPosition;
 
 				item.IsPlaced = true;
+
+				grid.AlignTransform(_currentItem.transform);
+				_currentItem.transform.position = CalculateOffsetY(); 
 
                 StartCoroutine("DB_InsertBuilding", item.topLeftPosition);
 
@@ -75,14 +83,25 @@ public class BuildManager : MonoBehaviour {
 		}
 	}
 	
-	public void StartBuild()
+	public void BuildCampFire()
 	{
 		if (ModeType == Mode.Build)
 		return;
 
 		ModeType = Mode.Build;
 
-		_currentItem = (GameObject)Instantiate (Obj, Input.mousePosition, Quaternion.identity);
+		_currentItem = (GameObject)Instantiate (CampFire, Input.mousePosition, Quaternion.identity);
+		item = (Item)_currentItem.GetComponent<Item> ();
+	}
+
+	public void BuildRock()
+	{
+		if (ModeType == Mode.Build)
+			return;
+		
+		ModeType = Mode.Build;
+		
+		_currentItem = (GameObject)Instantiate (Rock, Input.mousePosition, Quaternion.identity);
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
 
@@ -104,7 +123,7 @@ public class BuildManager : MonoBehaviour {
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_storebuilding.php",form);
         while (!www.isDone && string.IsNullOrEmpty(www.error))
         {
-            Debug.Log("Storing building: " + name + ", " + xPos + ", " + yPos + ", " + buildingID + ", " + level);
+            //Debug.Log("Storing building: " + name + ", " + xPos + ", " + yPos + ", " + buildingID + ", " + level);
             yield return null;
         }
         www.Dispose();
@@ -130,17 +149,13 @@ public class BuildManager : MonoBehaviour {
     }
 
 
-	// Convert world space floor points to tile points
-	Vector2 getTilePoints(Vector3 floorPoints)
-	{
-		Vector2 tilePoints = new Vector2();
-		// Convert the space points to tile points
-		tilePoints.x = (int)(floorPoints.x);
-		tilePoints.y = (int)(floorPoints.z);
-
-		//print ("y " + tilePoints.y + " x " + tilePoints.x); 
-
-		// Return the tile points
-		return tilePoints;
+	Vector3 CalculateOffsetY(){
+		//first store the objects position in grid coordinates
+		Vector3 gridPosition = grid.WorldToGrid(_currentItem.transform.position);
+		//then change only the Y coordinate
+		gridPosition.y = 0.5f * _currentItem.transform.lossyScale.y;
+		
+		//convert the result back to world coordinates
+		return grid.GridToWorld(gridPosition);
 	}
 }

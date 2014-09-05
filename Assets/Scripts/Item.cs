@@ -23,10 +23,10 @@ public class Item : MonoBehaviour  {
 
 	public int Level = 1;
 
-	private bool _canPlace = true;
-	private bool _outSideMap = false;
+	public bool _canPlace = true;
+	public bool _outSideMap = false;
 
-	private bool _isPlaced;
+	public bool _isPlaced;
 
 	public bool OutSideMap
 	{
@@ -94,7 +94,7 @@ public class Item : MonoBehaviour  {
 
 	void Update()
 	{
-		if (_canPlace || !_outSideMap)
+		if (_canPlace)
 		{
 			this.HightLight.renderer.material.SetColor ("_Color", Color.green);
 		} 
