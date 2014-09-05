@@ -36,8 +36,7 @@ public class CreatePlayer : MonoBehaviour {
     IEnumerator SaveName()
     {
         //TODO: Only allow A-z and numbers from 0-9 for Player names
-        //TODO: Limit the Player name to 15 characters
-        //TODO: Add feedback for "forbidden characters", "Player name to long", "Player name taken"  
+        //TODO: Add feedback for "forbidden characters", "Player name taken"  
         int money = 200;
         //Checks if there is already a Player with this name in the database
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_checkplayers.php");
