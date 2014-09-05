@@ -33,7 +33,7 @@ public class BuildManager : MonoBehaviour {
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void FixedUpdate () {
 
 		RaycastHit hit;
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
@@ -54,7 +54,7 @@ public class BuildManager : MonoBehaviour {
 			{
 				if(!item.CanPLace)
 					return;
-				item.topLeftPosition = _currentItem.transform.localPosition;
+				item.topLeftPosition = new Vector2( _currentItem.transform.position.x, _currentItem.transform.position.z);
 
 				item.IsPlaced = true;
 
@@ -123,7 +123,7 @@ public class BuildManager : MonoBehaviour {
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_storebuilding.php",form);
         while (!www.isDone && string.IsNullOrEmpty(www.error))
         {
-            //Debug.Log("Storing building: " + name + ", " + xPos + ", " + yPos + ", " + buildingID + ", " + level);
+            Debug.Log("Storing building: " + name + ", " + xPos + ", " + yPos + ", " + buildingID + ", " + level);
             yield return null;
         }
         www.Dispose();
