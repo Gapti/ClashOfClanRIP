@@ -14,6 +14,7 @@ public class BuildManager : MonoBehaviour {
 
 	public GameObject CampFire;
 	public GameObject Rock;
+	public GameObject Crate;
 
 	private GameObject _currentItem;
 	private Item item;
@@ -102,6 +103,17 @@ public class BuildManager : MonoBehaviour {
 		ModeType = Mode.Build;
 		
 		_currentItem = (GameObject)Instantiate (Rock, Input.mousePosition, Quaternion.identity);
+		item = (Item)_currentItem.GetComponent<Item> ();
+	}
+
+	public void BuildCrate()
+	{
+		if (ModeType == Mode.Build)
+			return;
+		
+		ModeType = Mode.Build;
+		
+		_currentItem = (GameObject)Instantiate (Crate, Input.mousePosition, Quaternion.identity);
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
 
