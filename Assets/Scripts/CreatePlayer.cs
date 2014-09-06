@@ -4,6 +4,12 @@ using UnityEngine.UI;
 using System.Text.RegularExpressions;
 public class CreatePlayer : MonoBehaviour
 {
+
+    /// <summary>
+    /// (maybe?)TODO: Add a databse check at the beginning, so the database checkes if the player that is stored in PlayerPrefs actually exists in the database
+    /// This will also make sure that the player is connected to the database.
+    /// </summary>
+
     public GameObject nameInput;
     public GameObject submitButton;
     public GameObject characterWarning;
@@ -15,21 +21,18 @@ public class CreatePlayer : MonoBehaviour
     private bool set = false;
     void Start()
     {
-        //TODO: Dont forget to remove the line below! ;)
-        PlayerPrefs.DeleteAll();
-
         if (!PlayerPrefs.HasKey("name"))
         {
             nameInput.SetActive(true);
             submitButton.SetActive(true);
-            alreadyRegistered.SetActive(false);
+            //alreadyRegistered.SetActive(false);
             enternameText.SetActive(true);
         }
         else
         {
             nameInput.SetActive(false);
             submitButton.SetActive(false);
-            alreadyRegistered.SetActive(true);
+            //alreadyRegistered.SetActive(true);
             enternameText.SetActive(false);
         }
 
@@ -81,8 +84,6 @@ public class CreatePlayer : MonoBehaviour
 
     IEnumerator SaveName()
     {
-
-        //TODO: Add feedback for "forbidden characters", "Player name taken"  
         int money = 200;
         //Checks if there is already a Player with this name in the database
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_checkplayers.php");

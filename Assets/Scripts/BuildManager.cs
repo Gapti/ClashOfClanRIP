@@ -121,7 +121,7 @@ public class BuildManager : MonoBehaviour {
     IEnumerator DB_InsertBuilding(Vector2 topLeft)
 	{
 		//Add a new building to the database as soon as its placed
-        string name = "Kuhmaus";
+        string name = PlayerPrefs.GetString("name");
         int xPos = (int)topLeft.x;
         int yPos = (int)topLeft.y;
         int buildingID = 2;
@@ -143,7 +143,7 @@ public class BuildManager : MonoBehaviour {
 
     IEnumerator DB_RemoveBuilding(Vector2 topLeft)
     {
-        string name = "Kuhmaus";
+        string name = PlayerPrefs.GetString("name");
         int xPos = (int)topLeft.x;
         int yPos = (int)topLeft.y;
         WWWForm form = new WWWForm();
