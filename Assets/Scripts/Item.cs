@@ -51,11 +51,11 @@ public class Item : MonoBehaviour  {
 		{
 			if(value)
 			{
-				HightLight.SetActive(false);
+				//HightLight.SetActive(false);
 			}
 			else
 			{
-				HightLight.SetActive(true);
+				//HightLight.SetActive(true);
 			}
 
 			_isPlaced = value;

@@ -47,6 +47,13 @@ public class BuildManager : MonoBehaviour {
 				_currentItem.transform.position = hit.point;
 				grid.AlignTransform(_currentItem.transform);
 				_currentItem.transform.position = CalculateOffsetY(); 
+
+				if(OutsideBounds(_currentItem.transform.position))
+				{
+					_currentItem.transform.position = OldPosition;
+				}
+
+				OldPosition = _currentItem.transform.position;
 			}
 
 
@@ -55,6 +62,7 @@ public class BuildManager : MonoBehaviour {
 			{
 				if(!item.CanPLace)
 					return;
+
 				item.topLeftPosition = new Vector2( _currentItem.transform.position.x, _currentItem.transform.position.z);
 
 				item.IsPlaced = true;
@@ -91,7 +99,8 @@ public class BuildManager : MonoBehaviour {
 
 		ModeType = Mode.Build;
 
-		_currentItem = (GameObject)Instantiate (CampFire, Input.mousePosition, Quaternion.identity);
+		_currentItem = (GameObject)Instantiate (CampFire, new Vector3(0,0,0), Quaternion.identity);
+		_currentItem.transform.parent = grid.transform;
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
 
@@ -102,7 +111,8 @@ public class BuildManager : MonoBehaviour {
 		
 		ModeType = Mode.Build;
 		
-		_currentItem = (GameObject)Instantiate (Rock, Input.mousePosition, Quaternion.identity);
+		_currentItem = (GameObject)Instantiate (Rock, new Vector3(0,0,0), Quaternion.identity);
+		_currentItem.transform.parent = grid.transform;
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
 
@@ -113,7 +123,8 @@ public class BuildManager : MonoBehaviour {
 		
 		ModeType = Mode.Build;
 		
-		_currentItem = (GameObject)Instantiate (Crate, Input.mousePosition, Quaternion.identity);
+			_currentItem = (GameObject)Instantiate (Crate, new Vector3(0,0,0), Quaternion.identity);
+		_currentItem.transform.parent = grid.transform;
 		item = (Item)_currentItem.GetComponent<Item> ();
 	}
 
@@ -169,5 +180,27 @@ public class BuildManager : MonoBehaviour {
 		
 		//convert the result back to world coordinates
 		return grid.GridToWorld(gridPosition);
+	}
+
+	bool OutsideBounds (Vector3 pos)
+	{
+		///so the object dosent offshoot the boundry 1x1 is under the edge if we leave tha
+
+		if ( item.CellWidth == 1) 
+		{
+			if (Mathf.Abs (pos.x) > Mathf.Abs (grid.size.x) || Mathf.Abs (pos.z) > Mathf.Abs (grid.size.z))
+			{
+				print ("too far  1x1" + grid.size.x + " : "+ pos.x + " y: " + grid.size.z + " ; " + pos.z);
+				return true;
+			}
+		} 
+		else if 
+		(Mathf.Abs (pos.x) > Mathf.Abs (grid.size.x - 1) || Mathf.Abs (pos.z) > Mathf.Abs (grid.size.z - 1))
+		{
+			print ("too far bigger" + grid.size.x + " : "+ pos.x + " y: " + grid.size.z + " ; " + pos.z);
+			return true;
+		}
+	
+		return false;
 	}
 }
