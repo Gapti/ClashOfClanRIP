@@ -63,13 +63,14 @@ public class BuildManager : MonoBehaviour {
 				if(!item.CanPLace)
 					return;
 
-				item.topLeftPosition = new Vector2( _currentItem.transform.position.x, _currentItem.transform.position.z);
 
 				item.IsPlaced = true;
 
 				grid.AlignTransform(_currentItem.transform);
 				_currentItem.transform.position = CalculateOffsetY(); 
 
+				item.topLeftPosition = new Vector2( _currentItem.transform.position.x, _currentItem.transform.position.z);
+				
                 StartCoroutine("DB_InsertBuilding", item.topLeftPosition);
 
 				ModeType = Mode.Move;
@@ -133,14 +134,14 @@ public class BuildManager : MonoBehaviour {
 	{
 		//Add a new building to the database as soon as its placed
         string name = PlayerPrefs.GetString("name");
-        int xPos = (int)topLeft.x;
-        int yPos = (int)topLeft.y;
+        float xPos = topLeft.x;
+        float yPos = topLeft.y;
         int buildingID = 2;
         int level =3;
         WWWForm form = new WWWForm();
         form.AddField("addbuilding_name",name);
-        form.AddField("addbuilding_xPos",xPos);
-        form.AddField("addbuilding_yPos", yPos);
+        form.AddField("addbuilding_xPos",xPos.ToString());
+        form.AddField("addbuilding_yPos", yPos.ToString());
         form.AddField("addbuilding_buildingID",buildingID);
         form.AddField("addbuilding_level", level);
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_storebuilding.php",form);
@@ -155,13 +156,13 @@ public class BuildManager : MonoBehaviour {
     IEnumerator DB_RemoveBuilding(Vector2 topLeft)
     {
         string name = PlayerPrefs.GetString("name");
-        int xPos = (int)topLeft.x;
-        int yPos = (int)topLeft.y;
+        float xPos = topLeft.x;
+        float yPos = topLeft.y;
         WWWForm form = new WWWForm();
         
         form.AddField("removebuilding_name", name);
-        form.AddField("removebuilding_xPos", xPos);
-        form.AddField("removebuilding_yPos", yPos);
+        form.AddField("removebuilding_xPos", xPos.ToString());
+        form.AddField("removebuilding_yPos", yPos.ToString());
         WWW www = new WWW("http://kuhmaus.bplaced.net/db_removebuilding.php", form);
         while (!www.isDone && string.IsNullOrEmpty(www.error))
         {

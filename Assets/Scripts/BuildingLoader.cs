@@ -73,6 +73,7 @@ public class BuildingLoader : MonoBehaviour {
         {
             
             _currentItem = Instantiate(testObject, GetPos(i), Quaternion.identity) as GameObject;
+			_currentItem.transform.parent = bm.grid.transform;
             item = (Item)_currentItem.GetComponent<Item>();
             item.topLeftPosition = new Vector2(_currentItem.transform.position.x, _currentItem.transform.position.z);
 
@@ -98,7 +99,7 @@ public class BuildingLoader : MonoBehaviour {
                 posData.y = data[i+index*COLUMNCOUNT];
         }
 
-        Debug.Log(posData);
+       // Debug.Log(posData);
             return new Vector3(posData.x, 0.5f, posData.y);
     }
 
