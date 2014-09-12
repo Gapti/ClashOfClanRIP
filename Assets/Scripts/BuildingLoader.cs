@@ -10,7 +10,7 @@ public class BuildingLoader : MonoBehaviour {
     private const int COLUMNCOUNT = 4;
 
     private int rowCount;
-    private int[] data;
+    private float[] data;
     BuildManager bm;
     private GameObject _currentItem;
     private Item item;
@@ -56,18 +56,19 @@ public class BuildingLoader : MonoBehaviour {
             Debug.Log("Getting buildings...");
             yield return null;
         }
+        print(www.text);
        ConvertTextToData(www.text);
         www.Dispose();
     }
 
     void ConvertTextToData(string s)
     {
-        data = new int[rowCount*COLUMNCOUNT];
-        string[] seperators = { "," };
+        data = new float[rowCount*COLUMNCOUNT];
+        string[] seperators = { "|" };
         string[] results = s.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
         for (int i = 0; i < results.Length; i++)
         {
-            data[i] = Convert.ToInt32(results[i]);
+            data[i] = float.Parse(results[i]);
         }
         for (int i = 0; i < rowCount; i++)
         {
